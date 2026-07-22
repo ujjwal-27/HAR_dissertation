@@ -31,9 +31,9 @@ This repository contains the implementation for the MSc dissertation project, in
 
 ## Clone the Repository
 
-git clone <repository-url>
+git clone git@github.com:ujjwal-27/HAR_dissertation.git
 
-cd HAR_Dissertation
+cd HAR_dissertation
 
 ---
 
