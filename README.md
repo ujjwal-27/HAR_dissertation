@@ -31,9 +31,19 @@ This repository contains the implementation for the MSc dissertation project, in
 
 ## Clone the Repository
 
-git clone git@github.com:ujjwal-27/HAR_dissertation.git
+### Using SSH (Recommended)
 
+```bash
+git clone git@github.com:ujjwal-27/HAR_dissertation.git
 cd HAR_dissertation
+```
+
+### Using HTTPS
+
+```bash
+git clone https://github.com/ujjwal-27/HAR_dissertation.git
+cd HAR_dissertation
+```
 
 ---
 
