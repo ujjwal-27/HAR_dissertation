@@ -90,6 +90,39 @@ def get_activity_classes(images_path: Path) -> list[str]:
 
     return class_names
 
+def count_images_per_class(images_path: Path) -> dict[str, int]:
+    """
+    Count the number of images in each activity class.
+
+    Parameters
+    ----------
+    images_path : Path
+        Path to the images directory.
+
+    Returns
+    -------
+    dict[str, int]
+        Dictionary containing activity classes and
+        their corresponding image counts.
+    """
+
+    image_counts = {}
+
+    # Count images for each activity class
+    for class_directory in sorted(images_path.iterdir()):
+
+        if not class_directory.is_dir():
+            continue
+
+        image_count = sum(
+            1
+            for file in class_directory.iterdir()
+            if file.is_file()
+        )
+
+        image_counts[class_directory.name] = image_count
+
+    return image_counts
 
 def analyse_dataset(dataset_path: Path) -> None:
     """
