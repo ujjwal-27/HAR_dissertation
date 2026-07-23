@@ -26,6 +26,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 # Stanford40 dataset directory
 DATASET_PATH = PROJECT_ROOT / "dataset"
 
+# --------------------------------------------------
+# Display Configuration
+# --------------------------------------------------
+
+SEPARATOR_LENGTH = 70
+SEPARATOR = "=" * SEPARATOR_LENGTH
+SUB_SEPARATOR = "-" * SEPARATOR_LENGTH
+
 
 def validate_dataset_structure(dataset_path: Path) -> tuple[Path, Path]:
     """
@@ -107,19 +115,22 @@ def analyse_dataset(dataset_path: Path) -> None:
     # --------------------------------------------------
     # Validate dataset structure
     # --------------------------------------------------
+
     images_path, splits_path = validate_dataset_structure(dataset_path)
 
     # --------------------------------------------------
     # Retrieve activity classes
     # --------------------------------------------------
+
     class_names = get_activity_classes(images_path)
 
     # --------------------------------------------------
     # Display dataset summary
     # --------------------------------------------------
-    print("=" * 70)
+
+    print(SEPARATOR)
     print("Stanford40 Dataset Analysis")
-    print("=" * 70)
+    print(SEPARATOR)
 
     print(f"Dataset Path      : {dataset_path}")
     print(f"Images Directory  : {images_path}")
@@ -128,7 +139,7 @@ def analyse_dataset(dataset_path: Path) -> None:
     print(f"\nTotal Classes     : {len(class_names)}")
 
     print("\nActivity Classes")
-    print("-" * 70)
+    print(SUB_SEPARATOR)
 
     for index, class_name in enumerate(class_names, start=1):
         print(f"{index:>2}. {class_name}")
