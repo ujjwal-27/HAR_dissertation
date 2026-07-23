@@ -16,41 +16,47 @@ Dissertation:
 
 from pathlib import Path
 
+# --------------------------------------------------
+# Project Paths
+# --------------------------------------------------
+
+# Project root directory
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+# Stanford40 dataset directory
+DATASET_PATH = PROJECT_ROOT / "dataset"
+
 
 def validate_dataset_structure(dataset_path: Path) -> tuple[Path, Path]:
     """
     Validate the Stanford40 dataset structure.
 
-    This function checks whether the required dataset directories
-    ('images' and 'ImageSplits') exist.
-
     Parameters
     ----------
     dataset_path : Path
-        Path to the Stanford40 dataset.
+        Path to the dataset directory.
 
     Returns
     -------
     tuple[Path, Path]
-        Paths to the images directory and ImageSplits directory.
+        Paths to the images and ImageSplits directories.
 
     Raises
     ------
     FileNotFoundError
-        If either required directory does not exist.
+        If a required dataset directory does not exist.
     """
 
-    # Define the expected dataset directories
+    # Required dataset directories
     images_path = dataset_path / "images"
     splits_path = dataset_path / "ImageSplits"
 
-    # Verify that the images directory exists
+    # Check dataset structure
     if not images_path.is_dir():
         raise FileNotFoundError(
             f"Images directory not found:\n{images_path}"
         )
 
-    # Verify that the split files directory exists
     if not splits_path.is_dir():
         raise FileNotFoundError(
             f"ImageSplits directory not found:\n{splits_path}"
@@ -74,7 +80,7 @@ def get_activity_classes(images_path: Path) -> list[str]:
         Alphabetically sorted list of activity class names.
     """
 
-    # Discover every class directory inside the images folder
+    # Retrieve activity class names
     class_names = sorted(
         folder.name
         for folder in images_path.iterdir()
@@ -86,12 +92,12 @@ def get_activity_classes(images_path: Path) -> list[str]:
 
 def analyse_dataset(dataset_path: Path) -> None:
     """
-    Analyse the Stanford40 dataset.
+    Perform an initial analysis of the Stanford40 dataset.
 
     Parameters
     ----------
     dataset_path : Path
-        Path to the Stanford40 dataset.
+        Path to the dataset directory.
 
     Returns
     -------
@@ -130,17 +136,10 @@ def analyse_dataset(dataset_path: Path) -> None:
 
 def main() -> None:
     """
-    Entry point of the dataset analysis module.
+    Execute the dataset analysis workflow.
     """
 
-    # Locate the project root directory automatically
-    project_root = Path(__file__).resolve().parents[2]
-
-    # Locate the dataset directory
-    dataset_path = project_root / "dataset"
-
-    # Run the dataset analysis
-    analyse_dataset(dataset_path)
+    analyse_dataset(DATASET_PATH)
 
 
 if __name__ == "__main__":
