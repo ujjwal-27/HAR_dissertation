@@ -170,13 +170,17 @@ def analyse_dataset(dataset_path: Path) -> None:
     print(f"ImageSplits       : {splits_path}")
 
     print(f"\nTotal Classes     : {len(class_names)}")
+    print(f"Total Images      : {total_images:,}")
 
-    print("\nActivity Classes")
+    print("\nActivity Distribution")
+    print("-" * 70)
+    print(f"{'Activity':<40}{'Images':>10}")
     print("-" * 70)
 
-    for index, class_name in enumerate(class_names, start=1):
-        print(f"{index:>2}. {class_name}")
+    for activity, count in image_counts.items():
+        print(f"{activity:<40}{count:>10}")
 
+    print("-" * 70)
 
 def main() -> None:
     """
