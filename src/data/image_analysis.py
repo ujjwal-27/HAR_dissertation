@@ -13,6 +13,7 @@ Dissertation:
     for Image-Based Human Activity Recognition
 """
 
+from collections import Counter
 from pathlib import Path
 
 from PIL import Image
@@ -115,6 +116,45 @@ def analyse_image_dimensions(images_path: Path) -> dict[str, float]:
     }
 
 
+def analyse_image_properties(images_path: Path) -> dict[str, Counter]:
+    """
+    Analyse image formats and colour modes.
+
+    Parameters
+    ----------
+    images_path : Path
+        Path to the images directory.
+
+    Returns
+    -------
+    dict[str, Counter]
+        Frequency of image formats and colour modes.
+    """
+
+    formats = Counter()
+    colour_modes = Counter()
+
+    # Analyse image properties
+    for class_directory in sorted(images_path.iterdir()):
+
+        if not class_directory.is_dir():
+            continue
+
+        for image_path in sorted(class_directory.iterdir()):
+
+            if not image_path.is_file():
+                continue
+
+            with Image.open(image_path) as image:
+                formats[image.format] += 1
+                colour_modes[image.mode] += 1
+
+    return {
+        "formats": formats,
+        "colour_modes": colour_modes,
+    }
+
+
 def analyse_images(dataset_path: Path) -> None:
     """
     Perform image validation for the Stanford40 dataset.
@@ -146,6 +186,12 @@ def analyse_images(dataset_path: Path) -> None:
     # --------------------------------------------------
 
     dimension_summary = analyse_image_dimensions(images_path)
+
+    # --------------------------------------------------
+    # Analyse image properties
+    # --------------------------------------------------
+
+    property_summary = analyse_image_properties(images_path)
 
     # --------------------------------------------------
     # Display validation results
@@ -190,6 +236,26 @@ def analyse_images(dataset_path: Path) -> None:
     print(f"Minimum Height    : {dimension_summary['min_height']} px")
     print(f"Maximum Height    : {dimension_summary['max_height']} px")
     print(f"Average Height    : {dimension_summary['avg_height']:.2f} px")
+
+    # --------------------------------------------------
+    # Display image formats
+    # --------------------------------------------------
+
+    print("\nImage Formats")
+    print("-" * 70)
+
+    for image_format, count in sorted(property_summary["formats"].items()):
+        print(f"{image_format:<15} {count:,}")
+
+    # --------------------------------------------------
+    # Display colour modes
+    # --------------------------------------------------
+
+    print("\nColour Modes")
+    print("-" * 70)
+
+    for mode, count in sorted(property_summary["colour_modes"].items()):
+        print(f"{mode:<15} {count:,}")
 
 
 def main() -> None:
