@@ -151,6 +151,13 @@ def analyse_dataset(dataset_path: Path) -> None:
     class_names = get_activity_classes(images_path)
 
     # --------------------------------------------------
+    # Count images per activity
+    # --------------------------------------------------
+
+    image_counts = count_images_per_class(images_path)
+    total_images = sum(image_counts.values())
+
+    # --------------------------------------------------
     # Display dataset summary
     # --------------------------------------------------
 
