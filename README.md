@@ -158,3 +158,11 @@ HAR_dissertation/
 ## Licence
 
 This repository is intended for academic and research purposes as part of an MSc dissertation at the University of West London.
+
+## Run Dataset Analysis
+
+From the project root, execute:
+
+```bash
+python src/data/dataset_analysis.py
+```
