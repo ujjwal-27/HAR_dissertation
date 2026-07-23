@@ -70,6 +70,51 @@ def validate_images(images_path: Path) -> tuple[int, int, list[Path]]:
     return valid_images, len(corrupted_images), corrupted_images
 
 
+def analyse_image_dimensions(images_path: Path) -> dict[str, float]:
+    """
+    Analyse image dimensions in the dataset.
+
+    Parameters
+    ----------
+    images_path : Path
+        Path to the images directory.
+
+    Returns
+    -------
+    dict[str, float]
+        Summary statistics for image width and height.
+    """
+
+    widths = []
+    heights = []
+
+    # Read the dimensions of every image
+    for class_directory in sorted(images_path.iterdir()):
+
+        if not class_directory.is_dir():
+            continue
+
+        for image_path in sorted(class_directory.iterdir()):
+
+            if not image_path.is_file():
+                continue
+
+            with Image.open(image_path) as image:
+                width, height = image.size
+
+            widths.append(width)
+            heights.append(height)
+
+    return {
+        "min_width": min(widths),
+        "max_width": max(widths),
+        "avg_width": sum(widths) / len(widths),
+        "min_height": min(heights),
+        "max_height": max(heights),
+        "avg_height": sum(heights) / len(heights),
+    }
+
+
 def analyse_images(dataset_path: Path) -> None:
     """
     Perform image validation for the Stanford40 dataset.
@@ -97,6 +142,12 @@ def analyse_images(dataset_path: Path) -> None:
     valid_images, corrupted_count, corrupted_images = validate_images(images_path)
 
     # --------------------------------------------------
+    # Analyse image dimensions
+    # --------------------------------------------------
+
+    dimension_summary = analyse_image_dimensions(images_path)
+
+    # --------------------------------------------------
     # Display validation results
     # --------------------------------------------------
 
@@ -122,6 +173,23 @@ def analyse_images(dataset_path: Path) -> None:
         print("-" * 70)
         print("✓ All images were opened successfully.")
         print("✓ No corrupted images were found.")
+
+    # --------------------------------------------------
+    # Display image dimensions
+    # --------------------------------------------------
+
+    print("\nImage Dimensions")
+    print("-" * 70)
+
+    print(f"Minimum Width     : {dimension_summary['min_width']} px")
+    print(f"Maximum Width     : {dimension_summary['max_width']} px")
+    print(f"Average Width     : {dimension_summary['avg_width']:.2f} px")
+
+    print()
+
+    print(f"Minimum Height    : {dimension_summary['min_height']} px")
+    print(f"Maximum Height    : {dimension_summary['max_height']} px")
+    print(f"Average Height    : {dimension_summary['avg_height']:.2f} px")
 
 
 def main() -> None:
