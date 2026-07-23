@@ -15,7 +15,6 @@ Dissertation:
 """
 
 from pathlib import Path
-from collections import OrderedDict
 
 # --------------------------------------------------
 # Project Paths
@@ -54,14 +53,10 @@ def validate_dataset_structure(dataset_path: Path) -> tuple[Path, Path]:
 
     # Check dataset structure
     if not images_path.is_dir():
-        raise FileNotFoundError(
-            f"Images directory not found:\n{images_path}"
-        )
+        raise FileNotFoundError(f"Images directory not found:\n{images_path}")
 
     if not splits_path.is_dir():
-        raise FileNotFoundError(
-            f"ImageSplits directory not found:\n{splits_path}"
-        )
+        raise FileNotFoundError(f"ImageSplits directory not found:\n{splits_path}")
 
     return images_path, splits_path
 
@@ -83,12 +78,11 @@ def get_activity_classes(images_path: Path) -> list[str]:
 
     # Retrieve activity class names
     class_names = sorted(
-        folder.name
-        for folder in images_path.iterdir()
-        if folder.is_dir()
+        folder.name for folder in images_path.iterdir() if folder.is_dir()
     )
 
     return class_names
+
 
 def count_images_per_class(images_path: Path) -> dict[str, int]:
     """
@@ -114,15 +108,76 @@ def count_images_per_class(images_path: Path) -> dict[str, int]:
         if not class_directory.is_dir():
             continue
 
-        image_count = sum(
-            1
-            for file in class_directory.iterdir()
-            if file.is_file()
-        )
+        image_count = sum(1 for file in class_directory.iterdir() if file.is_file())
 
         image_counts[class_directory.name] = image_count
 
     return image_counts
+
+
+def validate_train_test_splits(
+    images_path: Path, splits_path: Path
+) -> dict[str, dict[str, int]]:
+    """
+    Validate the official Stanford40 train/test split files.
+
+    Parameters
+    ----------
+    images_path : Path
+        Path to the images directory.
+
+    splits_path : Path
+        Path to the ImageSplits directory.
+
+    Returns
+    -------
+    dict[str, dict[str, int]]
+        Dictionary containing the number of training images,
+        testing images and total images for each activity.
+
+    Raises
+    ------
+    FileNotFoundError
+        If an image listed in a split file does not exist.
+    """
+
+    split_summary = {}
+
+    # Process each activity
+    for class_directory in sorted(images_path.iterdir()):
+
+        if not class_directory.is_dir():
+            continue
+
+        activity = class_directory.name
+
+        train_file = splits_path / f"{activity}_train.txt"
+        test_file = splits_path / f"{activity}_test.txt"
+
+        # Read training image names
+        with train_file.open("r") as file:
+            train_images = [line.strip() for line in file if line.strip()]
+
+        # Read testing image names
+        with test_file.open("r") as file:
+            test_images = [line.strip() for line in file if line.strip()]
+
+        # Check that every image exists
+        for image_name in train_images + test_images:
+
+            image_path = class_directory / image_name
+
+            if not image_path.is_file():
+                raise FileNotFoundError(f"Missing image:\n{image_path}")
+
+        split_summary[activity] = {
+            "train": len(train_images),
+            "test": len(test_images),
+            "total": len(train_images) + len(test_images),
+        }
+
+    return split_summary
+
 
 def analyse_dataset(dataset_path: Path) -> None:
     """
@@ -158,6 +213,15 @@ def analyse_dataset(dataset_path: Path) -> None:
     total_images = sum(image_counts.values())
 
     # --------------------------------------------------
+    # Validate train/test splits
+    # --------------------------------------------------
+
+    split_summary = validate_train_test_splits(
+        images_path,
+        splits_path,
+    )
+
+    # --------------------------------------------------
     # Display dataset summary
     # --------------------------------------------------
 
@@ -181,6 +245,47 @@ def analyse_dataset(dataset_path: Path) -> None:
         print(f"{activity:<40}{count:>10}")
 
     print("-" * 70)
+
+    print("\nTrain/Test Split Summary")
+
+    print("-" * 70)
+    print(f"{'Activity':<30}" f"{'Train':>8}" f"{'Test':>8}" f"{'Total':>10}")
+    print("-" * 70)
+
+    for activity, summary in split_summary.items():
+        print(
+            f"{activity:<30}"
+            f"{summary['train']:>8}"
+            f"{summary['test']:>8}"
+            f"{summary['total']:>10}"
+        )
+
+    print("-" * 70)
+
+    # --------------------------------------------------
+    # Verify image counts
+    # --------------------------------------------------
+
+    split_total = sum(summary["total"] for summary in split_summary.values())
+
+    print(f"\nImages from split files : {split_total:,}")
+    print(f"Images in dataset       : {total_images:,}")
+
+    # --------------------------------------------------
+    # Display validation results
+    # --------------------------------------------------
+
+    print("\nDataset Validation")
+    print("-" * 70)
+
+    if split_total == total_images:
+        print("✓ All images referenced in the train/test split were found.")
+        print("✓ Split file count matches the dataset.")
+        print("✓ Dataset integrity check passed.")
+    else:
+        print("✗ Split file count does not match the dataset.")
+        print("✗ Dataset integrity check failed.")
+
 
 def main() -> None:
     """
