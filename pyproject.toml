@@ -1,0 +1,5 @@
+[project]
+name = "har-dissertation"
+version = "0.1.0"
+description = "MSc Software Engineering dissertation project"
+requires-python = ">=3.11"
