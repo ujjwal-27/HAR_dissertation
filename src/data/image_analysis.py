@@ -280,6 +280,43 @@ def analyse_images(dataset_path: Path) -> None:
     else:
         print("✓ All images are RGB.")
 
+    # --------------------------------------------------
+    # Display image analysis summary
+    # --------------------------------------------------
+
+    print("\n" + "-" * 70)
+    print("Image Analysis Summary")
+    print("-" * 70)
+
+    format_count = len(property_summary["formats"])
+
+    if format_count == 1:
+        image_format = next(iter(property_summary["formats"]))
+        print(f"✓ All images are stored in {image_format} format.")
+    else:
+        print(f"✓ Dataset contains {format_count} image formats.")
+
+    rgb_count = property_summary["colour_modes"].get("RGB", 0)
+    non_rgb_count = len(non_rgb_images)
+
+    print(f"✓ {rgb_count:,} images are RGB.")
+
+    if non_rgb_count == 0:
+        print("✓ No colour conversion is required.")
+    elif non_rgb_count == 1:
+        print("✓ 1 grayscale image will be converted to RGB during preprocessing.")
+    else:
+        print(
+            f"✓ {non_rgb_count} non-RGB images will be converted to RGB during preprocessing."
+        )
+
+    print(
+        f"✓ Image dimensions range from "
+        f"{dimension_summary['min_width']}×{dimension_summary['min_height']} px "
+        f"to "
+        f"{dimension_summary['max_width']}×{dimension_summary['max_height']} px."
+    )
+
 
 def main() -> None:
     """
