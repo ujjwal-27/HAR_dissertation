@@ -133,6 +133,7 @@ def analyse_image_properties(images_path: Path) -> dict[str, Counter]:
 
     formats = Counter()
     colour_modes = Counter()
+    non_rgb_images = []
 
     # Analyse image properties
     for class_directory in sorted(images_path.iterdir()):
@@ -146,12 +147,16 @@ def analyse_image_properties(images_path: Path) -> dict[str, Counter]:
                 continue
 
             with Image.open(image_path) as image:
+                if image.mode != "RGB":
+                    non_rgb_images.append((image_path, image.mode))
+
                 formats[image.format] += 1
                 colour_modes[image.mode] += 1
 
     return {
         "formats": formats,
         "colour_modes": colour_modes,
+        "non_rgb_images": non_rgb_images,
     }
 
 
@@ -256,6 +261,24 @@ def analyse_images(dataset_path: Path) -> None:
 
     for mode, count in sorted(property_summary["colour_modes"].items()):
         print(f"{mode:<15} {count:,}")
+
+    # --------------------------------------------------
+    # Display non-RGB images
+    # --------------------------------------------------
+
+    print("\nNon-RGB Images")
+    print("-" * 70)
+
+    non_rgb_images = property_summary["non_rgb_images"]
+
+    if non_rgb_images:
+
+        for image_path, mode in non_rgb_images:
+            relative_path = image_path.relative_to(images_path)
+            print(f"{relative_path} ({mode})")
+
+    else:
+        print("✓ All images are RGB.")
 
 
 def main() -> None:
