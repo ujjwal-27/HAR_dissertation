@@ -22,9 +22,7 @@ from src.config.constants import (
     DATASET_NAME,
     RGB_MODE,
 )
-
 from src.config.paths import (
-    DATASET_PATH,
     IMAGES_PATH,
 )
 

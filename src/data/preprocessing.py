@@ -13,26 +13,14 @@ Dissertation:
     for Image-Based Human Activity Recognition
 """
 
-from pathlib import Path
-
-# --------------------------------------------------
-# Project Paths
-# --------------------------------------------------
-
-# Project root directory
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-# Original dataset directory
-DATASET_PATH = PROJECT_ROOT / "dataset"
-
-# Original images directory
-IMAGES_PATH = DATASET_PATH / "images"
-
-# Preprocessed dataset directory
-PREPROCESSED_PATH = DATASET_PATH / "preprocessed"
-
-# Preprocessed images directory
-PREPROCESSED_IMAGES_PATH = PREPROCESSED_PATH / "images"
+from src.config.constants import (
+    DATASET_NAME,
+)
+from src.config.paths import (
+    IMAGES_PATH,
+    PREPROCESSED_IMAGES_PATH,
+    PREPROCESSED_PATH,
+)
 
 
 def create_directory_structure() -> int:
@@ -76,7 +64,7 @@ def main() -> None:
     directory_count = create_directory_structure()
 
     print("=" * 70)
-    print("Stanford40 Preprocessing")
+    print(f"{DATASET_NAME} Preprocessing")
     print("=" * 70)
 
     print(f"Output Directory     : {PREPROCESSED_PATH}")
