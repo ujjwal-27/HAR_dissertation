@@ -18,15 +18,15 @@ from pathlib import Path
 
 from PIL import Image
 
-# --------------------------------------------------
-# Project Paths
-# --------------------------------------------------
+from src.config.constants import (
+    DATASET_NAME,
+    RGB_MODE,
+)
 
-# Project root directory
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-# Stanford40 dataset directory
-DATASET_PATH = PROJECT_ROOT / "dataset"
+from src.config.paths import (
+    DATASET_PATH,
+    IMAGES_PATH,
+)
 
 
 def validate_images(images_path: Path) -> tuple[int, int, list[Path]]:
@@ -147,7 +147,7 @@ def analyse_image_properties(images_path: Path) -> dict[str, Counter]:
                 continue
 
             with Image.open(image_path) as image:
-                if image.mode != "RGB":
+                if image.mode != RGB_MODE:
                     non_rgb_images.append((image_path, image.mode))
 
                 formats[image.format] += 1
@@ -160,7 +160,7 @@ def analyse_image_properties(images_path: Path) -> dict[str, Counter]:
     }
 
 
-def analyse_images(dataset_path: Path) -> None:
+def analyse_images(images_path: Path) -> None:
     """
     Perform image validation for the Stanford40 dataset.
 
@@ -173,12 +173,6 @@ def analyse_images(dataset_path: Path) -> None:
     -------
     None
     """
-
-    # --------------------------------------------------
-    # Locate images directory
-    # --------------------------------------------------
-
-    images_path = dataset_path / "images"
 
     # --------------------------------------------------
     # Validate images
@@ -203,7 +197,7 @@ def analyse_images(dataset_path: Path) -> None:
     # --------------------------------------------------
 
     print("=" * 70)
-    print("Stanford40 Image Validation")
+    print(f"{DATASET_NAME} Image Validation")
     print("=" * 70)
 
     print(f"Images Directory   : {images_path}")
@@ -296,7 +290,7 @@ def analyse_images(dataset_path: Path) -> None:
     else:
         print(f"✓ Dataset contains {format_count} image formats.")
 
-    rgb_count = property_summary["colour_modes"].get("RGB", 0)
+    rgb_count = property_summary["colour_modes"].get(RGB_MODE, 0)
     non_rgb_count = len(non_rgb_images)
 
     print(f"✓ {rgb_count:,} images are RGB.")
@@ -323,7 +317,7 @@ def main() -> None:
     Execute the image validation workflow.
     """
 
-    analyse_images(DATASET_PATH)
+    analyse_images(IMAGES_PATH)
 
 
 if __name__ == "__main__":
