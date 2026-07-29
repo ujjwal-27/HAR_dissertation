@@ -16,18 +16,14 @@ Dissertation:
 
 from pathlib import Path
 
-# --------------------------------------------------
-# Project Paths
-# --------------------------------------------------
-
-# Project root directory
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-# Stanford40 dataset directory
-DATASET_PATH = PROJECT_ROOT / "dataset"
+from src.config.paths import (
+    DATASET_PATH,
+    IMAGE_SPLITS_PATH,
+    IMAGES_PATH,
+)
 
 
-def validate_dataset_structure(dataset_path: Path) -> tuple[Path, Path]:
+def validate_dataset_structure() -> tuple[Path, Path]:
     """
     Validate the Stanford40 dataset structure.
 
@@ -48,17 +44,15 @@ def validate_dataset_structure(dataset_path: Path) -> tuple[Path, Path]:
     """
 
     # Required dataset directories
-    images_path = dataset_path / "images"
-    splits_path = dataset_path / "ImageSplits"
+    if not IMAGES_PATH.is_dir():
+        raise FileNotFoundError(f"Images directory not found:\n{IMAGES_PATH}")
 
-    # Check dataset structure
-    if not images_path.is_dir():
-        raise FileNotFoundError(f"Images directory not found:\n{images_path}")
+    if not IMAGE_SPLITS_PATH.is_dir():
+        raise FileNotFoundError(
+            f"ImageSplits directory not found:\n{IMAGE_SPLITS_PATH}"
+        )
 
-    if not splits_path.is_dir():
-        raise FileNotFoundError(f"ImageSplits directory not found:\n{splits_path}")
-
-    return images_path, splits_path
+    return IMAGES_PATH, IMAGE_SPLITS_PATH
 
 
 def get_activity_classes(images_path: Path) -> list[str]:
@@ -179,7 +173,7 @@ def validate_train_test_splits(
     return split_summary
 
 
-def analyse_dataset(dataset_path: Path) -> None:
+def analyse_dataset() -> None:
     """
     Perform an initial analysis of the Stanford40 dataset.
 
@@ -197,7 +191,7 @@ def analyse_dataset(dataset_path: Path) -> None:
     # Validate dataset structure
     # --------------------------------------------------
 
-    images_path, splits_path = validate_dataset_structure(dataset_path)
+    images_path, splits_path = validate_dataset_structure()
 
     # --------------------------------------------------
     # Retrieve activity classes
@@ -229,7 +223,7 @@ def analyse_dataset(dataset_path: Path) -> None:
     print("Stanford40 Dataset Analysis")
     print("=" * 70)
 
-    print(f"Dataset Path      : {dataset_path}")
+    print(f"Dataset Path      : {DATASET_PATH}")
     print(f"Images Directory  : {images_path}")
     print(f"ImageSplits       : {splits_path}")
 
@@ -292,7 +286,7 @@ def main() -> None:
     Execute the dataset analysis workflow.
     """
 
-    analyse_dataset(DATASET_PATH)
+    analyse_dataset()
 
 
 if __name__ == "__main__":
