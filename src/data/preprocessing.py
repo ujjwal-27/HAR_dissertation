@@ -61,14 +61,21 @@ def create_directory_structure() -> int:
     return directory_count
 
 
-def process_image(image_path: Path) -> bool:
+def process_image(
+    image_path: Path,
+    output_path: Path,
+) -> bool:
     """
-    Open an image and convert it to RGB if necessary.
+    Open an image, convert it to RGB if necessary,
+    and save it to the preprocessed dataset.
 
     Parameters
     ----------
     image_path : Path
         Path to the input image.
+
+    output_path : Path
+        Path where the processed image will be saved.
 
     Returns
     -------
@@ -79,11 +86,15 @@ def process_image(image_path: Path) -> bool:
 
     with Image.open(image_path) as image:
 
+        converted = False
+
         if image.mode != RGB_MODE:
             image = image.convert(RGB_MODE)
-            return True
+            converted = True
 
-    return False
+        image.save(output_path)
+
+    return converted
 
 
 def preprocess_dataset() -> tuple[int, int]:
@@ -111,7 +122,11 @@ def preprocess_dataset() -> tuple[int, int]:
             if not image_path.is_file():
                 continue
 
-            if process_image(image_path):
+            output_path = (
+                PREPROCESSED_IMAGES_PATH / class_directory.name / image_path.name
+            )
+
+            if process_image(image_path, output_path):
                 converted_images += 1
 
             processed_images += 1
@@ -137,10 +152,11 @@ def main() -> None:
     print(f"Images Processed     : {processed_images:,}")
     print(f"Images Converted     : {converted_images:,}")
 
-    print("\nPreprocessing Setup")
+    print("\nPreprocessing Summary")
     print("-" * 70)
     print("✓ Preprocessed dataset directory created.")
     print("✓ Activity class directories created.")
+    print("✓ Images successfully processed and saved.")
 
 
 if __name__ == "__main__":
