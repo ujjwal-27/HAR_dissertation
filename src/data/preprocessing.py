@@ -20,6 +20,7 @@ from PIL import Image
 from src.config.constants import (
     DATASET_NAME,
     RGB_MODE,
+    TARGET_IMAGE_SIZE,
 )
 from src.config.paths import (
     IMAGES_PATH,
@@ -86,12 +87,21 @@ def process_image(
 
     with Image.open(image_path) as image:
 
+        # Flag to indicate if the image was converted to RGB
         converted = False
 
+        # Convert the image to RGB if it's not already in that mode
         if image.mode != RGB_MODE:
             image = image.convert(RGB_MODE)
             converted = True
 
+        # Resize the image to the target size
+        image = image.resize(
+            TARGET_IMAGE_SIZE,
+            Image.Resampling.LANCZOS,
+        )
+
+        # Save the processed image to the output path
         image.save(output_path)
 
     return converted
