@@ -19,6 +19,7 @@ from PIL import Image
 
 from src.config.constants import (
     DATASET_NAME,
+    RGB_MODE,
 )
 from src.config.paths import (
     IMAGES_PATH,
@@ -60,21 +61,32 @@ def create_directory_structure() -> int:
     return directory_count
 
 
-def process_image(image_path: Path) -> None:
+def process_image(image_path: Path) -> bool:
     """
-    Open a single image.
+    Open an image and convert it to RGB if necessary.
 
     Parameters
     ----------
     image_path : Path
         Path to the input image.
+
+    Returns
+    -------
+    bool
+        True if the image was converted to RGB,
+        otherwise False.
     """
 
-    with Image.open(image_path):
-        pass
+    with Image.open(image_path) as image:
+
+        if image.mode != RGB_MODE:
+            image = image.convert(RGB_MODE)
+            return True
+
+    return False
 
 
-def preprocess_dataset() -> int:
+def preprocess_dataset() -> tuple[int, int]:
     """
     Read every image in the dataset.
 
@@ -85,6 +97,7 @@ def preprocess_dataset() -> int:
     """
 
     processed_images = 0
+    converted_images = 0
 
     # Traverse every activity class
     for class_directory in sorted(IMAGES_PATH.iterdir()):
@@ -98,11 +111,12 @@ def preprocess_dataset() -> int:
             if not image_path.is_file():
                 continue
 
-            # Open the image
-            process_image(image_path)
+            if process_image(image_path):
+                converted_images += 1
+
             processed_images += 1
 
-    return processed_images
+    return processed_images, converted_images
 
 
 def main() -> None:
@@ -112,7 +126,7 @@ def main() -> None:
 
     directory_count = create_directory_structure()
 
-    processed_images = preprocess_dataset()
+    processed_images, converted_images = preprocess_dataset()
 
     print("=" * 70)
     print(f"{DATASET_NAME} Preprocessing")
@@ -121,6 +135,7 @@ def main() -> None:
     print(f"Output Directory     : {PREPROCESSED_PATH}")
     print(f"Activity Directories : {directory_count}")
     print(f"Images Processed     : {processed_images:,}")
+    print(f"Images Converted     : {converted_images:,}")
 
     print("\nPreprocessing Setup")
     print("-" * 70)
