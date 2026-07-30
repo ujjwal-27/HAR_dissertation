@@ -13,6 +13,8 @@ Dissertation:
     for Image-Based Human Activity Recognition
 """
 
+from pathlib import Path
+
 from PIL import Image
 
 from src.config.constants import (
@@ -58,6 +60,20 @@ def create_directory_structure() -> int:
     return directory_count
 
 
+def process_image(image_path: Path) -> None:
+    """
+    Open a single image.
+
+    Parameters
+    ----------
+    image_path : Path
+        Path to the input image.
+    """
+
+    with Image.open(image_path):
+        pass
+
+
 def preprocess_dataset() -> int:
     """
     Read every image in the dataset.
@@ -83,8 +99,8 @@ def preprocess_dataset() -> int:
                 continue
 
             # Open the image
-            with Image.open(image_path):
-                processed_images += 1
+            process_image(image_path)
+            processed_images += 1
 
     return processed_images
 
