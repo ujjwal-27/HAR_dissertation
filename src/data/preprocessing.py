@@ -144,6 +144,41 @@ def preprocess_dataset() -> tuple[int, int]:
     return processed_images, converted_images
 
 
+def verify_preprocessed_images() -> tuple[int, int]:
+    """
+    Verify that all preprocessed images have the expected size.
+
+    Returns
+    -------
+    tuple[int, int]
+        Number of images with the correct size and
+        number of images with an incorrect size.
+    """
+
+    correct_size = 0
+    incorrect_size = 0
+
+    for class_directory in sorted(PREPROCESSED_IMAGES_PATH.iterdir()):
+
+        if not class_directory.is_dir():
+            continue
+
+        for image_path in sorted(class_directory.iterdir()):
+
+            if not image_path.is_file():
+                continue
+
+            with Image.open(image_path) as image:
+
+                if image.size == TARGET_IMAGE_SIZE:
+                    correct_size += 1
+                else:
+                    incorrect_size += 1
+                    print(f"Incorrect size: " f"{image_path.name} -> {image.size}")
+
+    return correct_size, incorrect_size
+
+
 def main() -> None:
     """
     Execute the preprocessing setup.
@@ -152,6 +187,8 @@ def main() -> None:
     directory_count = create_directory_structure()
 
     processed_images, converted_images = preprocess_dataset()
+
+    correct_size, incorrect_size = verify_preprocessed_images()
 
     print("=" * 70)
     print(f"{DATASET_NAME} Preprocessing")
@@ -167,6 +204,11 @@ def main() -> None:
     print("✓ Preprocessed dataset directory created.")
     print("✓ Activity class directories created.")
     print("✓ Images successfully processed and saved.")
+
+    print("\nVerification")
+    print("-" * 70)
+    print(f"Correct Size      : {correct_size:,}")
+    print(f"Incorrect Size    : {incorrect_size:,}")
 
 
 if __name__ == "__main__":
