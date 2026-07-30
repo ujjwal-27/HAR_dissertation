@@ -13,6 +13,7 @@ Dissertation:
     for Image-Based Human Activity Recognition
 """
 
+import time
 from pathlib import Path
 
 from PIL import Image
@@ -144,19 +145,22 @@ def preprocess_dataset() -> tuple[int, int]:
     return processed_images, converted_images
 
 
-def verify_preprocessed_images() -> tuple[int, int]:
+def verify_preprocessed_images() -> tuple[int, int, int]:
     """
-    Verify that all preprocessed images have the expected size.
+    Verify that all preprocessed images have the expected
+    colour mode and image size.
 
     Returns
     -------
-    tuple[int, int]
-        Number of images with the correct size and
-        number of images with an incorrect size.
+    tuple[int, int, int]
+        Number of RGB images,
+        number of correctly resized images,
+        number of incorrect images.
     """
 
+    rgb_images = 0
     correct_size = 0
-    incorrect_size = 0
+    incorrect_images = 0
 
     for class_directory in sorted(PREPROCESSED_IMAGES_PATH.iterdir()):
 
@@ -170,13 +174,20 @@ def verify_preprocessed_images() -> tuple[int, int]:
 
             with Image.open(image_path) as image:
 
+                if image.mode == RGB_MODE:
+                    rgb_images += 1
+
                 if image.size == TARGET_IMAGE_SIZE:
                     correct_size += 1
                 else:
-                    incorrect_size += 1
-                    print(f"Incorrect size: " f"{image_path.name} -> {image.size}")
+                    incorrect_images += 1
+                    print(
+                        f"Verification failed: "
+                        f"{image_path.name} "
+                        f"(Mode={image.mode}, Size={image.size})"
+                    )
 
-    return correct_size, incorrect_size
+    return rgb_images, correct_size, incorrect_images
 
 
 def main() -> None:
@@ -184,11 +195,15 @@ def main() -> None:
     Execute the preprocessing setup.
     """
 
+    start_time = time.perf_counter()
+
     directory_count = create_directory_structure()
 
     processed_images, converted_images = preprocess_dataset()
 
-    correct_size, incorrect_size = verify_preprocessed_images()
+    rgb_images, correct_size, incorrect_images = verify_preprocessed_images()
+
+    elapsed_time = time.perf_counter() - start_time
 
     print("=" * 70)
     print(f"{DATASET_NAME} Preprocessing")
@@ -207,8 +222,16 @@ def main() -> None:
 
     print("\nVerification")
     print("-" * 70)
-    print(f"Correct Size      : {correct_size:,}")
-    print(f"Incorrect Size    : {incorrect_size:,}")
+    print(f"RGB Images          : {rgb_images:,}")
+    print(f"Correct Size        : {correct_size:,}")
+    print(f"Incorrect Images    : {incorrect_images:,}")
+
+    if incorrect_images == 0:
+        print("✓ Verification passed.")
+    else:
+        print("✗ Verification failed.")
+
+    print(f"\nProcessing Time      : {elapsed_time:.2f} seconds")
 
 
 if __name__ == "__main__":
