@@ -133,10 +133,12 @@ def preprocess_dataset() -> tuple[int, int]:
             if not image_path.is_file():
                 continue
 
+            # Define the output path for the processed image
             output_path = (
                 PREPROCESSED_IMAGES_PATH / class_directory.name / image_path.name
             )
 
+            # Process the image and save it to the preprocessed dataset
             if process_image(image_path, output_path):
                 converted_images += 1
 
@@ -162,16 +164,20 @@ def verify_preprocessed_images() -> tuple[int, int, int]:
     correct_size = 0
     incorrect_images = 0
 
+    # Traverse every activity class in the preprocessed dataset
     for class_directory in sorted(PREPROCESSED_IMAGES_PATH.iterdir()):
 
         if not class_directory.is_dir():
             continue
 
+        # Traverse every image in the activity class
         for image_path in sorted(class_directory.iterdir()):
 
+            # Check if the image file exists
             if not image_path.is_file():
                 continue
 
+            # Open the image and verify its colour mode and size
             with Image.open(image_path) as image:
 
                 if image.mode == RGB_MODE:
@@ -195,6 +201,7 @@ def main() -> None:
     Execute the preprocessing setup.
     """
 
+    # Start the timer to measure the total processing time
     start_time = time.perf_counter()
 
     directory_count = create_directory_structure()
@@ -203,6 +210,7 @@ def main() -> None:
 
     rgb_images, correct_size, incorrect_images = verify_preprocessed_images()
 
+    # Calculate the elapsed time for the entire preprocessing operation
     elapsed_time = time.perf_counter() - start_time
 
     print("=" * 70)
