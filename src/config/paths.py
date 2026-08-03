@@ -36,3 +36,6 @@ IMAGE_SPLITS_PATH = DATASET_PATH / "ImageSplits"
 # Preprocessed dataset directories
 PREPROCESSED_PATH = DATASET_PATH / "preprocessed"
 PREPROCESSED_IMAGES_PATH = PREPROCESSED_PATH / "images"
+
+# Model directory
+MODEL_PATH = PROJECT_ROOT / "saved_models"
