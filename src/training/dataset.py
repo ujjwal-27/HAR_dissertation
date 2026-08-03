@@ -15,6 +15,7 @@ Dissertation:
 
 from pathlib import Path
 
+from PIL import Image
 from torch.utils.data import Dataset
 
 from src.config.paths import (
@@ -31,6 +32,7 @@ class Stanford40Dataset(Dataset):
     def __init__(
         self,
         split: str,
+        transform=None,
     ) -> None:
         """
         Initialise the dataset.
@@ -42,6 +44,7 @@ class Stanford40Dataset(Dataset):
         """
 
         self.split = split
+        self.transform = transform
 
         self.class_names = self._load_class_names()
 
@@ -112,9 +115,26 @@ class Stanford40Dataset(Dataset):
 
     def __getitem__(self, index: int):
         """
-        Placeholder implementation.
+        Retrieve an image and its corresponding label.
 
-        Will be completed in the next step.
+        Parameters
+        ----------
+        index : int
+            Index of the sample.
+
+        Returns
+        -------
+        tuple
+            Image and corresponding class label.
         """
 
-        return self.samples[index]
+        image_path, label = self.samples[index]
+
+        with Image.open(image_path) as image:
+
+            image = image.convert("RGB")
+
+            if self.transform is not None:
+                image = self.transform(image)
+
+        return image, label
