@@ -29,8 +29,11 @@ IMAGE_EXTENSIONS = (
     ".jpeg",
 )
 
+# Validation split ratio
+VALIDATION_SPLIT = 0.2
+
 # --------------------------------------------------
-# Image Processing
+# Image
 # --------------------------------------------------
 
 # Target image size for pretrained CNN models
@@ -45,3 +48,10 @@ RGB_MODE = "RGB"
 
 # Random seed
 RANDOM_SEED = 42
+
+# --------------------------------------------------
+# Training
+# --------------------------------------------------
+
+BATCH_SIZE = 32
+NUM_WORKERS = 4
