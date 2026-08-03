@@ -54,4 +54,4 @@ RANDOM_SEED = 42
 # --------------------------------------------------
 
 BATCH_SIZE = 32
-NUM_WORKERS = 4
+NUM_WORKERS = 0
