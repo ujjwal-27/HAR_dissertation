@@ -1,9 +1,15 @@
 from src.training.dataset import Stanford40Dataset
+from src.training.transforms import (
+    get_test_transform,
+)
 
-train_dataset = Stanford40Dataset("train")
+dataset = Stanford40Dataset(
+    split="train",
+    transform=get_test_transform(),
+)
 
-image, label = train_dataset[0]
+image, label = dataset[0]
 
 print(type(image))
+print(image.shape)
 print(label)
-print(image.size)
