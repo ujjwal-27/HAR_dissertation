@@ -20,6 +20,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from src.config.constants import (
+    EXPERIMENT_NAME,
     LEARNING_RATE,
     MODEL_FILENAME,
     NUM_EPOCHS,
@@ -29,7 +30,7 @@ from src.config.paths import (
     MODEL_PATH,
     RESULTS_PATH,
 )
-from src.models.resnet import build_resnet
+from src.models import build_resnet
 from src.training.dataloader import create_dataloaders
 from src.training.evaluate import evaluate
 from src.training.train import train_one_epoch
@@ -49,6 +50,8 @@ def main():
         device = torch.device("cpu")
 
     print(f"Device: {device}")
+    print(f"Experiment: {EXPERIMENT_NAME}")
+    print("-" * 70)
 
     # Create DataLoaders
     train_loader, validation_loader, _ = create_dataloaders()
@@ -137,20 +140,11 @@ def main():
 
     print("\nTraining completed.")
 
-    print(
-        f"Best Validation Accuracy : "
-        f"{best_validation_accuracy:.2f}%"
-    )
+    print(f"Best Validation Accuracy : " f"{best_validation_accuracy:.2f}%")
 
-    print(
-        f"Best model saved to: "
-        f"{MODEL_PATH / MODEL_FILENAME}"
-    )
+    print(f"Best model saved to: " f"{MODEL_PATH / MODEL_FILENAME}")
 
-    print(
-        f"Training log saved to: "
-        f"{RESULTS_PATH / RESULTS_FILENAME}"
-    )
+    print(f"Training log saved to: " f"{RESULTS_PATH / RESULTS_FILENAME}")
 
 
 if __name__ == "__main__":
