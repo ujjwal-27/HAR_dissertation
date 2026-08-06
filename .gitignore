@@ -28,5 +28,6 @@ __pycache__/
 # --------------------------------------------------
 # Generated Outputs
 # --------------------------------------------------
-outputs/
 datasets/preprocessed/
+results/
+saved_models/
