@@ -68,3 +68,10 @@ NUM_EPOCHS = 20
 # --------------------------------------------------
 
 MODEL_SAVE_PATH = "saved_models"
+
+# --------------------------------------------------
+# Output Files
+# --------------------------------------------------
+
+MODEL_FILENAME = "resnet_feature_extraction.pth"
+RESULTS_FILENAME = "resnet_feature_extraction.csv"

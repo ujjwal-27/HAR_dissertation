@@ -39,3 +39,20 @@ PREPROCESSED_IMAGES_PATH = PREPROCESSED_PATH / "images"
 
 # Model directory
 MODEL_PATH = PROJECT_ROOT / "saved_models"
+
+# --------------------------------------------------
+# Model Outputs
+# --------------------------------------------------
+
+MODEL_PATH = PROJECT_ROOT / "saved_models"
+RESULTS_PATH = PROJECT_ROOT / "results"
+
+MODEL_PATH.mkdir(
+    parents=True,
+    exist_ok=True,
+)
+
+RESULTS_PATH.mkdir(
+    parents=True,
+    exist_ok=True,
+)
