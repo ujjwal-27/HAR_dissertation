@@ -73,5 +73,10 @@ MODEL_SAVE_PATH = "saved_models"
 # Output Files
 # --------------------------------------------------
 
-MODEL_FILENAME = "resnet_feature_extraction.pth"
-RESULTS_FILENAME = "resnet_feature_extraction.csv"
+# --------------------------------------------------
+# Experiment
+# --------------------------------------------------
+
+EXPERIMENT_NAME = "resnet_feature_extraction"
+MODEL_FILENAME = f"{EXPERIMENT_NAME}.pth"
+RESULTS_FILENAME = f"{EXPERIMENT_NAME}.csv"
