@@ -14,13 +14,20 @@ Dissertation:
     for Image-Based Human Activity Recognition
 """
 
+import csv
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
 from src.config.constants import (
     LEARNING_RATE,
+    MODEL_FILENAME,
     NUM_EPOCHS,
+    RESULTS_FILENAME,
+)
+from src.config.paths import (
+    MODEL_PATH,
+    RESULTS_PATH,
 )
 from src.models.resnet import build_resnet
 from src.training.dataloader import create_dataloaders
@@ -34,7 +41,12 @@ def main():
     """
 
     # Select computation device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
 
     print(f"Device: {device}")
 
@@ -52,6 +64,27 @@ def main():
         model.fc.parameters(),
         lr=LEARNING_RATE,
     )
+
+    # Track the best validation accuracy
+    best_validation_accuracy = 0.0
+
+    # Create CSV file
+    csv_path = RESULTS_PATH / RESULTS_FILENAME
+
+    # Write results to CSV file
+    with open(csv_path, "w", newline="") as file:
+
+        writer = csv.writer(file)
+
+        writer.writerow(
+            [
+                "Epoch",
+                "Train Loss",
+                "Train Accuracy",
+                "Validation Loss",
+                "Validation Accuracy",
+            ]
+        )
 
     # Training loop
     for epoch in range(NUM_EPOCHS):
@@ -71,6 +104,29 @@ def main():
             device,
         )
 
+        with open(csv_path, "a", newline="") as file:
+
+            writer = csv.writer(file)
+
+            writer.writerow(
+                [
+                    epoch + 1,
+                    train_loss,
+                    train_accuracy,
+                    validation_loss,
+                    validation_accuracy,
+                ]
+            )
+
+        if validation_accuracy > best_validation_accuracy:
+
+            best_validation_accuracy = validation_accuracy
+
+            torch.save(
+                model.state_dict(),
+                MODEL_PATH / MODEL_FILENAME,
+            )
+
         print(
             f"Epoch {epoch + 1}/{NUM_EPOCHS} | "
             f"Train Loss: {train_loss:.4f} | "
@@ -78,6 +134,23 @@ def main():
             f"Val Loss: {validation_loss:.4f} | "
             f"Val Acc: {validation_accuracy:.2f}%"
         )
+
+    print("\nTraining completed.")
+
+    print(
+        f"Best Validation Accuracy : "
+        f"{best_validation_accuracy:.2f}%"
+    )
+
+    print(
+        f"Best model saved to: "
+        f"{MODEL_PATH / MODEL_FILENAME}"
+    )
+
+    print(
+        f"Training log saved to: "
+        f"{RESULTS_PATH / RESULTS_FILENAME}"
+    )
 
 
 if __name__ == "__main__":
