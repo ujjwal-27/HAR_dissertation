@@ -30,7 +30,7 @@ from src.config.paths import (
     MODEL_PATH,
     RESULTS_PATH,
 )
-from src.models.model_factory import build_model
+from src.models import build_model
 from src.training.dataloader import create_dataloaders
 from src.training.evaluate import evaluate
 from src.training.train import train_one_epoch
@@ -64,7 +64,7 @@ def main():
 
     # Optimizer
     optimizer = optim.Adam(
-        model.fc.parameters(),
+        model.classifier.parameters(),
         lr=LEARNING_RATE,
     )
 

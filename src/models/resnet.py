@@ -41,10 +41,13 @@ def build_resnet() -> nn.Module:
     for parameter in model.parameters():
         parameter.requires_grad = False
 
-    # Replace the classifier
+    # Replace final fully connected layer
     model.fc = nn.Linear(
         model.fc.in_features,
         NUM_CLASSES,
     )
+
+    # Common classifier interface
+    model.classifier = model.fc
 
     return model
