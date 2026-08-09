@@ -30,7 +30,7 @@ from src.config.paths import (
     MODEL_PATH,
     RESULTS_PATH,
 )
-from src.models import build_resnet
+from src.models.model_factory import build_model
 from src.training.dataloader import create_dataloaders
 from src.training.evaluate import evaluate
 from src.training.train import train_one_epoch
@@ -57,7 +57,7 @@ def main():
     train_loader, validation_loader, _ = create_dataloaders()
 
     # Build model
-    model = build_resnet().to(device)
+    model = build_model().to(device)
 
     # Loss function
     criterion = nn.CrossEntropyLoss()
