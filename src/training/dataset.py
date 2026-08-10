@@ -17,11 +17,44 @@ from pathlib import Path
 
 from PIL import Image
 from torch.utils.data import Dataset
+from torchvision import transforms
 
+from src.config.constants import USE_DATA_AUGMENTATION
 from src.config.paths import (
     IMAGE_SPLITS_PATH,
     PREPROCESSED_IMAGES_PATH,
 )
+
+
+def get_transform():
+    """
+    Create the image transformation pipeline.
+
+    Returns
+    -------
+    transforms.Compose
+        Transformation pipeline for the dataset.
+    """
+
+    if USE_DATA_AUGMENTATION:
+        return transforms.Compose(
+            [
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomRotation(15),
+                transforms.ColorJitter(
+                    brightness=0.2,
+                    contrast=0.2,
+                    saturation=0.2,
+                ),
+                transforms.ToTensor(),
+            ]
+        )
+
+    return transforms.Compose(
+        [
+            transforms.ToTensor(),
+        ]
+    )
 
 
 class Stanford40Dataset(Dataset):
@@ -44,7 +77,11 @@ class Stanford40Dataset(Dataset):
         """
 
         self.split = split
-        self.transform = transform
+
+        if transform is not None:
+            self.transform = transform
+        else:
+            self.transform = get_transform()
 
         self.class_names = self._load_class_names()
 
