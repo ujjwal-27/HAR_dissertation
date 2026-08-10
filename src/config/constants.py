@@ -97,9 +97,12 @@ MODEL_NAME = "resnet"
 
 TRAINING_MODE = "feature_extraction"
 
-USE_DATA_AUGMENTATION = True
+USE_DATA_AUGMENTATION = False
 
-EXPERIMENT_NAME = f"{MODEL_NAME}_{TRAINING_MODE}"
+EXPERIMENT_NAME = (
+    f"{MODEL_NAME}_{TRAINING_MODE}"
+    f"{'_augmentation' if USE_DATA_AUGMENTATION else ''}"
+)
 
 # --------------------------------------------------
 # Output Files
