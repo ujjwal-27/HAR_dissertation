@@ -64,7 +64,10 @@ def main():
 
     # Optimizer
     optimizer = optim.Adam(
-        model.classifier.parameters(),
+        filter(
+            lambda parameter: parameter.requires_grad,
+            model.parameters(),
+        ),
         lr=LEARNING_RATE,
     )
 

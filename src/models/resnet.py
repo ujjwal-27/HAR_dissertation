@@ -19,7 +19,10 @@ from torchvision.models import (
     resnet50,
 )
 
-from src.config.constants import NUM_CLASSES
+from src.config.constants import (
+    NUM_CLASSES,
+    TRAINING_MODE,
+)
 
 
 def build_resnet() -> nn.Module:
@@ -37,9 +40,19 @@ def build_resnet() -> nn.Module:
         weights=ResNet50_Weights.DEFAULT,
     )
 
-    # Freeze all pretrained layers
-    for parameter in model.parameters():
-        parameter.requires_grad = False
+    # Configure trainable layers
+    if TRAINING_MODE == "feature_extraction":
+
+        for parameter in model.parameters():
+            parameter.requires_grad = False
+
+    elif TRAINING_MODE == "fine_tuning":
+
+        for parameter in model.parameters():
+            parameter.requires_grad = True
+
+    else:
+        raise ValueError(f"Unsupported training mode: {TRAINING_MODE}")
 
     # Replace final fully connected layer
     model.fc = nn.Linear(

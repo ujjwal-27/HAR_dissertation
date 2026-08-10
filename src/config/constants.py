@@ -95,7 +95,7 @@ NUM_EPOCHS = 20
 
 MODEL_NAME = "resnet"
 
-TRAINING_MODE = "feature_extraction"
+TRAINING_MODE = "fine_tuning"
 
 USE_DATA_AUGMENTATION = False
 

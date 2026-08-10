@@ -19,7 +19,10 @@ from torchvision.models import (
     mobilenet_v3_large,
 )
 
-from src.config.constants import NUM_CLASSES
+from src.config.constants import (
+    NUM_CLASSES,
+    TRAINING_MODE,
+)
 
 
 def build_mobilenet() -> nn.Module:
@@ -37,9 +40,19 @@ def build_mobilenet() -> nn.Module:
         weights=MobileNet_V3_Large_Weights.DEFAULT,
     )
 
-    # Freeze all pretrained layers
-    for parameter in model.parameters():
-        parameter.requires_grad = False
+    # Configure trainable layers
+    if TRAINING_MODE == "feature_extraction":
+
+        for parameter in model.parameters():
+            parameter.requires_grad = False
+
+    elif TRAINING_MODE == "fine_tuning":
+
+        for parameter in model.parameters():
+            parameter.requires_grad = True
+
+    else:
+        raise ValueError(f"Unsupported training mode: {TRAINING_MODE}")
 
     # Replace classifier
     model.classifier[-1] = nn.Linear(
