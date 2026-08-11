@@ -93,11 +93,11 @@ NUM_EPOCHS = 20
 #   Experiment 8: MobileNet  + Fine-Tuning        + Augmentation
 # --------------------------------------------------
 
-MODEL_NAME = "resnet"
+MODEL_NAME = "mobilenet"
 
-TRAINING_MODE = "fine_tuning"
+TRAINING_MODE = "feature_extraction"
 
-USE_DATA_AUGMENTATION = True
+USE_DATA_AUGMENTATION = False
 
 EXPERIMENT_NAME = (
     f"{MODEL_NAME}_{TRAINING_MODE}"
