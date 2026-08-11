@@ -97,7 +97,7 @@ MODEL_NAME = "mobilenet"
 
 TRAINING_MODE = "feature_extraction"
 
-USE_DATA_AUGMENTATION = False
+USE_DATA_AUGMENTATION = True
 
 EXPERIMENT_NAME = (
     f"{MODEL_NAME}_{TRAINING_MODE}"
