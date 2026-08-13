@@ -16,11 +16,14 @@ Dissertation:
 import csv
 
 import torch
+import matplotlib.pyplot as plt
 from sklearn.metrics import (
     accuracy_score,
-    f1_score,
     precision_score,
     recall_score,
+    f1_score,
+    confusion_matrix,
+    ConfusionMatrixDisplay,
 )
 
 from src.config.paths import (
@@ -138,7 +141,14 @@ def evaluate_model(
         zero_division=0,
     )
 
-    return accuracy, precision, recall, f1
+    return (
+        accuracy,
+        precision,
+        recall,
+        f1,
+        all_labels,
+        all_predictions,
+    )
 
 
 def main():
@@ -177,7 +187,14 @@ def main():
             )
         )
 
-        accuracy, precision, recall, f1 = evaluate_model(
+        (
+            accuracy,
+            precision,
+            recall,
+            f1,
+            all_labels,
+            all_predictions,
+        ) = evaluate_model(
             model,
             test_loader,
             device,
@@ -187,6 +204,37 @@ def main():
         print(f"Precision : {precision * 100:.2f}%")
         print(f"Recall    : {recall * 100:.2f}%")
         print(f"F1 Score  : {f1 * 100:.2f}%")
+
+        # Generate confusion matrix
+        matrix = confusion_matrix(
+            all_labels,
+            all_predictions,
+        )
+
+        display = ConfusionMatrixDisplay(
+            confusion_matrix=matrix,
+        )
+
+        display.plot(
+            xticks_rotation="vertical",
+        )
+
+        plt.title(
+            f"Confusion Matrix - {experiment_name}"
+        )
+
+        confusion_matrix_path = (
+            RESULTS_PATH
+            / "confusion_matrices"
+            / f"{experiment_name}.png"
+        )
+
+        plt.savefig(
+            confusion_matrix_path,
+            bbox_inches="tight",
+        )
+
+        plt.close()
 
         results.append(
             [
