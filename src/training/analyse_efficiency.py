@@ -30,46 +30,57 @@ EXPERIMENTS = [
     {
         "name": "resnet_feature_extraction",
         "model": "resnet",
+        "training_mode": "feature_extraction",
     },
     {
         "name": "resnet_feature_extraction_augmentation",
         "model": "resnet",
+        "training_mode": "feature_extraction",
     },
     {
         "name": "resnet_fine_tuning",
         "model": "resnet",
+        "training_mode": "fine_tuning",
     },
     {
         "name": "resnet_fine_tuning_augmentation",
         "model": "resnet",
+        "training_mode": "fine_tuning",
     },
     {
         "name": "mobilenet_feature_extraction",
         "model": "mobilenet",
+        "training_mode": "feature_extraction",
     },
     {
         "name": "mobilenet_feature_extraction_augmentation",
         "model": "mobilenet",
+        "training_mode": "feature_extraction",
     },
     {
         "name": "mobilenet_fine_tuning",
         "model": "mobilenet",
+        "training_mode": "fine_tuning",
     },
     {
         "name": "mobilenet_fine_tuning_augmentation",
         "model": "mobilenet",
+        "training_mode": "fine_tuning",
     },
 ]
 
 
-def build_model(model_name):
+def build_model(
+    model_name,
+    training_mode,
+):
     """Build the requested CNN architecture."""
 
     if model_name == "resnet":
-        return build_resnet()
+        return build_resnet(training_mode)
 
     if model_name == "mobilenet":
-        return build_mobilenet()
+        return build_mobilenet(training_mode)
 
     raise ValueError(f"Unknown model: {model_name}")
 
@@ -165,7 +176,10 @@ def main():
         print("-" * 70)
         print(f"Analysing: {experiment_name}")
 
-        model = build_model(experiment["model"]).to(device)
+        model = build_model(
+            experiment["model"],
+            experiment["training_mode"],
+        ).to(device)
 
         model_path = MODEL_PATH / f"{experiment_name}.pth"
 

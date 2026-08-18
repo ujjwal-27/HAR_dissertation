@@ -25,7 +25,9 @@ from src.config.constants import (
 )
 
 
-def build_mobilenet() -> nn.Module:
+def build_mobilenet(
+    training_mode: str = TRAINING_MODE,
+) -> nn.Module:
     """
     Build a pretrained MobileNetV3-Large model for feature extraction.
 
@@ -41,23 +43,27 @@ def build_mobilenet() -> nn.Module:
     )
 
     # Configure trainable layers
-    if TRAINING_MODE == "feature_extraction":
+    if training_mode == "feature_extraction":
 
         for parameter in model.parameters():
             parameter.requires_grad = False
 
-    elif TRAINING_MODE == "fine_tuning":
+    elif training_mode == "fine_tuning":
 
         for parameter in model.parameters():
             parameter.requires_grad = True
 
     else:
-        raise ValueError(f"Unsupported training mode: {TRAINING_MODE}")
+        raise ValueError(f"Unsupported training mode: {training_mode}")
 
     # Replace classifier
     model.classifier[-1] = nn.Linear(
         model.classifier[-1].in_features,
         NUM_CLASSES,
     )
+
+    # Ensure final classifier is trainable
+    for parameter in model.classifier[-1].parameters():
+        parameter.requires_grad = True
 
     return model
