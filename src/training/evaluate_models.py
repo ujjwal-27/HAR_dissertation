@@ -167,6 +167,8 @@ def main():
 
     _, _, test_loader = create_dataloaders()
 
+    class_names = test_loader.dataset.class_names
+
     results = []
 
     for experiment in EXPERIMENTS:
@@ -209,32 +211,59 @@ def main():
         matrix = confusion_matrix(
             all_labels,
             all_predictions,
+            labels=range(len(class_names)),
+        )
+
+        fig, ax = plt.subplots(
+            figsize=(16, 14),
         )
 
         display = ConfusionMatrixDisplay(
             confusion_matrix=matrix,
+            display_labels=class_names,
         )
 
         display.plot(
-            xticks_rotation="vertical",
+            ax=ax,
+            xticks_rotation=90,
+            include_values=False,
+            colorbar=True,
         )
 
-        plt.title(
-            f"Confusion Matrix - {experiment_name}"
+        ax.set_title(
+            f"Confusion Matrix - {experiment_name}",
+            fontsize=16,
+            pad=15,
         )
+
+        ax.set_xlabel(
+            "Predicted Activity",
+            fontsize=12,
+        )
+
+        ax.set_ylabel(
+            "True Activity",
+            fontsize=12,
+        )
+
+        ax.tick_params(
+            axis="both",
+            labelsize=8,
+        )
+
+        fig.tight_layout()
 
         confusion_matrix_path = (
-            RESULTS_PATH
-            / "confusion_matrices"
-            / f"{experiment_name}.png"
+            RESULTS_PATH / "confusion_matrices" / f"{experiment_name}.png"
         )
 
-        plt.savefig(
+        fig.savefig(
             confusion_matrix_path,
+            dpi=300,
             bbox_inches="tight",
         )
 
-        plt.close()
+        plt.close(fig)
 
         results.append(
             [
