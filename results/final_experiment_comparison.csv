@@ -1,9 +1,9 @@
-Experiment,Architecture,Training Strategy,Data Augmentation,Accuracy,Precision,Recall,F1 Score,Total Parameters,Trainable Parameters,Model Size (MB),Inference Time per Image (ms)
-resnet_feature_extraction,ResNet50,Feature Extraction,No,0.7570498915401301,0.7609926766564069,0.7570498915401301,0.7558363520469397,23589992,81960,90.19171905517578,2.780188415727025
-resnet_feature_extraction_augmentation,ResNet50,Feature Extraction,Yes,0.7586767895878525,0.7657306116382372,0.7586767895878525,0.7564900839604065,23589992,81960,90.19171905517578,2.5836815093498444
-resnet_fine_tuning,ResNet50,Fine-Tuning,No,0.5920101229211858,0.6312668919579397,0.5920101229211858,0.5977342821780987,23589992,23589992,90.19171905517578,2.5094759155763313
-resnet_fine_tuning_augmentation,ResNet50,Fine-Tuning,Yes,0.6156905278380332,0.6559435466050222,0.6156905278380332,0.6177855663122431,23589992,23589992,90.19171905517578,2.5089268188821734
-mobilenet_feature_extraction,MobileNetV3-Large,Feature Extraction,No,0.6469631236442517,0.6431346568982804,0.6469631236442517,0.63988246361383,4253272,51240,16.318374633789062,1.0384753936705238
-mobilenet_feature_extraction_augmentation,MobileNetV3-Large,Feature Extraction,Yes,0.6623282718727405,0.6641985987970792,0.6623282718727405,0.6584157711661391,4253272,51240,16.318374633789062,0.7995009124897479
-mobilenet_fine_tuning,MobileNetV3-Large,Fine-Tuning,No,0.6388286334056399,0.6759675304929714,0.6388286334056399,0.6396140004881858,4253272,4253272,16.318374633789062,0.8029634128433827
-mobilenet_fine_tuning_augmentation,MobileNetV3-Large,Fine-Tuning,Yes,0.636117136659436,0.6827525603961114,0.636117136659436,0.6369394029243997,4253272,4253272,16.318374633789062,0.8048450468777446
+Experiment,Architecture,Training Strategy,Data Augmentation,Accuracy,Precision,Recall,F1 Score,Total Parameters,Trainable Parameters,Model Size (MB),Inference Time per Image (ms),Training Time (seconds),Training Time (minutes)
+resnet_feature_extraction,ResNet50,Feature Extraction,No,0.75,0.76,0.75,0.75,"23,589,992","81,960",90.19,3.37,271.45,4.52
+resnet_feature_extraction_augmentation,ResNet50,Feature Extraction,Yes,0.75,0.76,0.75,0.75,"23,589,992","81,960",90.19,2.52,288.71,4.81
+resnet_fine_tuning,ResNet50,Fine-Tuning,No,0.58,0.62,0.58,0.58,"23,589,992","23,589,992",90.19,2.53,672.73,11.21
+resnet_fine_tuning_augmentation,ResNet50,Fine-Tuning,Yes,0.65,0.67,0.65,0.65,"23,589,992","23,589,992",90.19,2.54,706.75,11.78
+mobilenet_feature_extraction,MobileNetV3-Large,Feature Extraction,No,0.64,0.64,0.64,0.64,"4,253,272","51,240",16.32,1.08,118.34,1.97
+mobilenet_feature_extraction_augmentation,MobileNetV3-Large,Feature Extraction,Yes,0.67,0.67,0.67,0.66,"4,253,272","51,240",16.32,0.81,137.92,2.30
+mobilenet_fine_tuning,MobileNetV3-Large,Fine-Tuning,No,0.56,0.62,0.56,0.54,"4,253,272","4,253,272",16.32,0.81,272.00,4.53
+mobilenet_fine_tuning_augmentation,MobileNetV3-Large,Fine-Tuning,Yes,0.60,0.66,0.60,0.60,"4,253,272","4,253,272",16.32,0.81,294.46,4.91

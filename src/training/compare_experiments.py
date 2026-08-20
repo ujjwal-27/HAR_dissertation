@@ -18,6 +18,14 @@ import csv
 from src.config.paths import RESULTS_PATH
 
 
+def format_decimal(value):
+    """
+    Format a numeric value to two decimal places.
+    """
+
+    return f"{float(value):.2f}"
+
+
 def main():
     """
     Create the final comparison table for all experiments.
@@ -44,7 +52,6 @@ def main():
         reader = csv.DictReader(file)
 
         for row in reader:
-
             evaluation_results[row["Experiment"]] = row
 
     # --------------------------------------------------
@@ -62,7 +69,6 @@ def main():
         reader = csv.DictReader(file)
 
         for row in reader:
-
             efficiency_results[row["Experiment"]] = row
 
     # --------------------------------------------------
@@ -98,14 +104,18 @@ def main():
                 architecture,
                 training_strategy,
                 augmentation,
-                evaluation["Accuracy"],
-                evaluation["Precision"],
-                evaluation["Recall"],
-                evaluation["F1 Score"],
-                efficiency["Total Parameters"],
-                efficiency["Trainable Parameters"],
-                efficiency["Model Size (MB)"],
-                efficiency["Inference Time per Image (ms)"],
+                # Performance metrics
+                format_decimal(evaluation["Accuracy"]),
+                format_decimal(evaluation["Precision"]),
+                format_decimal(evaluation["Recall"]),
+                format_decimal(evaluation["F1 Score"]),
+                # Computational efficiency
+                f"{int(float(efficiency['Total Parameters'])):,}",
+                f"{int(float(efficiency['Trainable Parameters'])):,}",
+                format_decimal(efficiency["Model Size (MB)"]),
+                format_decimal(efficiency["Inference Time per Image (ms)"]),
+                format_decimal(efficiency["Training Time (seconds)"]),
+                format_decimal(efficiency["Training Time (minutes)"]),
             ]
         )
 
@@ -135,6 +145,8 @@ def main():
                 "Trainable Parameters",
                 "Model Size (MB)",
                 "Inference Time per Image (ms)",
+                "Training Time (seconds)",
+                "Training Time (minutes)",
             ]
         )
 
