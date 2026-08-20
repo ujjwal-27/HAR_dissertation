@@ -15,6 +15,8 @@ Dissertation:
 """
 
 import csv
+import time
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -36,16 +38,33 @@ from src.training.evaluate import evaluate
 from src.training.train import train_one_epoch
 
 
+def synchronise_device(device):
+    """
+    Synchronise the computation device before measuring elapsed time.
+
+    This is particularly important for hardware accelerators such as
+    Apple MPS and CUDA because operations may execute asynchronously.
+    """
+
+    if device.type == "mps":
+        torch.mps.synchronize()
+
+    elif device.type == "cuda":
+        torch.cuda.synchronize()
+
+
 def main():
     """
-    Execute Experiment 1.
+    Execute one configured dissertation experiment.
     """
 
     # Select computation device
     if torch.backends.mps.is_available():
         device = torch.device("mps")
+
     elif torch.cuda.is_available():
         device = torch.device("cuda")
+
     else:
         device = torch.device("cpu")
 
@@ -77,8 +96,12 @@ def main():
     # Create CSV file
     csv_path = RESULTS_PATH / RESULTS_FILENAME
 
-    # Write results to CSV file
-    with open(csv_path, "w", newline="") as file:
+    # Write training-log header
+    with open(
+        csv_path,
+        "w",
+        newline="",
+    ) as file:
 
         writer = csv.writer(file)
 
@@ -91,6 +114,11 @@ def main():
                 "Validation Accuracy",
             ]
         )
+
+    # Synchronise before starting the training timer
+    synchronise_device(device)
+
+    training_start_time = time.perf_counter()
 
     # Training loop
     for epoch in range(NUM_EPOCHS):
@@ -110,7 +138,11 @@ def main():
             device,
         )
 
-        with open(csv_path, "a", newline="") as file:
+        with open(
+            csv_path,
+            "a",
+            newline="",
+        ) as file:
 
             writer = csv.writer(file)
 
@@ -141,7 +173,22 @@ def main():
             f"Val Acc: {validation_accuracy:.2f}%"
         )
 
+    # Synchronise before stopping the training timer
+    synchronise_device(device)
+
+    training_end_time = time.perf_counter()
+
+    training_time_seconds = training_end_time - training_start_time
+
+    training_time_minutes = training_time_seconds / 60
+
     print("\nTraining completed.")
+
+    print(
+        f"Total Training Time : "
+        f"{training_time_seconds:.2f} seconds "
+        f"({training_time_minutes:.2f} minutes)"
+    )
 
     print(f"Best Validation Accuracy : " f"{best_validation_accuracy:.2f}%")
 
