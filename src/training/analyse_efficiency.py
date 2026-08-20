@@ -31,41 +31,49 @@ EXPERIMENTS = [
         "name": "resnet_feature_extraction",
         "model": "resnet",
         "training_mode": "feature_extraction",
+        "training_time_seconds": 271.45,
     },
     {
         "name": "resnet_feature_extraction_augmentation",
         "model": "resnet",
         "training_mode": "feature_extraction",
+        "training_time_seconds": 288.71,
     },
     {
         "name": "resnet_fine_tuning",
         "model": "resnet",
         "training_mode": "fine_tuning",
+        "training_time_seconds": 672.73,
     },
     {
         "name": "resnet_fine_tuning_augmentation",
         "model": "resnet",
         "training_mode": "fine_tuning",
+        "training_time_seconds": 706.75,
     },
     {
         "name": "mobilenet_feature_extraction",
         "model": "mobilenet",
         "training_mode": "feature_extraction",
+        "training_time_seconds": 118.34,
     },
     {
         "name": "mobilenet_feature_extraction_augmentation",
         "model": "mobilenet",
         "training_mode": "feature_extraction",
+        "training_time_seconds": 137.92,
     },
     {
         "name": "mobilenet_fine_tuning",
         "model": "mobilenet",
         "training_mode": "fine_tuning",
+        "training_time_seconds": 272.00,
     },
     {
         "name": "mobilenet_fine_tuning_augmentation",
         "model": "mobilenet",
         "training_mode": "fine_tuning",
+        "training_time_seconds": 294.46,
     },
 ]
 
@@ -94,7 +102,10 @@ def count_parameters(model):
         parameter.numel() for parameter in model.parameters() if parameter.requires_grad
     )
 
-    return total_parameters, trainable_parameters
+    return (
+        total_parameters,
+        trainable_parameters,
+    )
 
 
 def calculate_model_size(model):
@@ -138,12 +149,18 @@ def measure_inference_time(
             if device.type == "mps":
                 torch.mps.synchronize()
 
+            elif device.type == "cuda":
+                torch.cuda.synchronize()
+
             start_time = time.perf_counter()
 
             model(images)
 
             if device.type == "mps":
                 torch.mps.synchronize()
+
+            elif device.type == "cuda":
+                torch.cuda.synchronize()
 
             end_time = time.perf_counter()
 
@@ -158,8 +175,10 @@ def main():
 
     if torch.backends.mps.is_available():
         device = torch.device("mps")
+
     elif torch.cuda.is_available():
         device = torch.device("cuda")
+
     else:
         device = torch.device("cpu")
 
@@ -200,6 +219,10 @@ def main():
             device,
         )
 
+        training_time_seconds = experiment["training_time_seconds"]
+
+        training_time_minutes = training_time_seconds / 60
+
         print(f"Total Parameters    : " f"{total_parameters:,}")
 
         print(f"Trainable Parameters: " f"{trainable_parameters:,}")
@@ -208,6 +231,12 @@ def main():
 
         print(f"Inference Time/Image: " f"{inference_time * 1000:.3f} ms")
 
+        print(
+            f"Training Time       : "
+            f"{training_time_seconds:.2f} seconds "
+            f"({training_time_minutes:.2f} minutes)"
+        )
+
         results.append(
             [
                 experiment_name,
@@ -215,6 +244,8 @@ def main():
                 trainable_parameters,
                 model_size_mb,
                 inference_time * 1000,
+                training_time_seconds,
+                training_time_minutes,
             ]
         )
 
@@ -235,6 +266,8 @@ def main():
                 "Trainable Parameters",
                 "Model Size (MB)",
                 "Inference Time per Image (ms)",
+                "Training Time (seconds)",
+                "Training Time (minutes)",
             ]
         )
 
